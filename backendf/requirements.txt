@@ -1,0 +1,16 @@
+fastapi
+pydantic
+uvicorn[standard]
+pydantic
+pydantic-settings
+psycopg2-binary==2.9.10
+sqlalchemy             # ORM 與 core API          
+asyncpg
+# python-dotenv        # 開發環境載入.env
+alembic
+sqlmodel
+#passlib[bcrypt]
+passlib[argon2]
+pytest                 #testing
+pytest-asyncio         #testing(高併發測試使用)
+httpx                  #testing

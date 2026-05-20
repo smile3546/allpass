@@ -1,0 +1,24 @@
+.venv/
+__pycache__/
+*cache/
+*.pyc
+# .env
+**/.DS_Store
+kernel/
+*.crt
+*.pem
+*bkp*
+backup/
+models/
+#*test*
+node_modules
+
+tttt.ipynb
+local_model/
+
+#services
+services/airflow/logs/
+
+#dev
+poetry_kernel/
+logs/

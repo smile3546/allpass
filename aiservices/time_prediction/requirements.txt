@@ -1,0 +1,13 @@
+fastapi
+pydantic
+uvicorn[standard]
+scikit-learn==1.5.1
+pandas==2.2.2
+joblib
+xgboost==2.1.1
+numpy==1.26.4
+redis
+mlflow==3.3.2
+boto3
+pytest
+httpx

@@ -1,0 +1,94 @@
+import React, { useEffect, useState } from 'react';
+import TrailCard from '../components/TrailCard';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import Navbar from '../components/Navbar';
+
+// Home 組件：負責載入並顯示所有步道卡片
+export default function Home() {
+  const [trails, setTrails] = useState([]); // 存放步道陣列
+  const [error, setError] = useState(null); // 錯誤訊息
+  const [username, setUsername] = useState(null); // 用於存儲用戶名稱
+
+  const navigate = useNavigate();
+
+  // 檢查 localStorage 是否有登入資訊
+  useEffect(() => {
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
+
+  // 元件掛載後向後端取得步道資料
+  useEffect(() => {
+    async function fetchTrails() {
+      try {
+        const res = await fetch('/api/trails');
+        if (!res.ok) throw new Error('Network response was not ok');
+        const json = await res.json();
+        // 持有品田 持有桃山 沒有詳細步道資料 先濾掉
+        setTrails(json.trails.filter(trail => trail.id !== 4 && trail.id !== 5));
+      } catch (err) {
+        // 將錯誤訊息記錄於 state 以便顯示在畫面上
+        setError(err.message);
+      }
+    }
+    fetchTrails();
+  }, []);
+
+  // 處理步道卡片點擊
+  const handleTrailClick = (trail) => {
+    // 將選擇的步道資料存儲到 localStorage
+    localStorage.setItem('selectedTrail', JSON.stringify({
+      id: trail.id,
+      name: trail.name,
+      location: trail.location,
+      difficulty: trail.difficulty,
+      permitRequired: trail.permitRequired,
+      selectedAt: new Date().toISOString()
+    }));
+
+    // 導航到步道詳細頁面
+    navigate(`/trail/${trail.id}`);
+  };
+
+  if (error) {
+    return <p>無法載入步道列表：{error}</p>;
+  }
+
+  return (
+    <>
+      <Navbar />
+      <motion.header
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 3 }}
+        className="home-header"
+      >
+        <div className='home-header-text'>
+          <h1>All 爬ss</h1>
+          {username ? (
+            <p>歡迎回來 {username}!</p>
+          ) : (
+            <p>探索台灣步道</p>
+          )}
+        </div>
+      </motion.header>
+      <main>
+        <div className="trail-grid">
+          {trails.map(trail => (
+            <TrailCard
+              key={trail.id}
+              trail={trail}
+              onClick={() => handleTrailClick(trail)}
+            />
+          ))}
+        </div>
+      </main>
+      <footer style={{ textAlign: 'center' }}>
+        <p>&copy; 2025 登山資訊網. All rights reserved.</p>
+      </footer>
+    </>
+  );
+}
